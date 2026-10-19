@@ -25,6 +25,7 @@ public class WeatherApp {
                 // Delegation: Resultat anzeigen
                 ui.showResult(city, temperature, recommendation);
             } catch (InvalidInputException e) {
+                // Exception abfangen, Fehlermeldung auslesen und anzeigen
                 ui.showError(e.getMessage());
             } catch (IOException | InterruptedException e) {
                 ui.showError("Die Wetter-API ist im Moment nicht erreichbar.");

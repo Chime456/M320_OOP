@@ -6,7 +6,10 @@ public class InputValidator {
             throw new InvalidInputException("Die Stadt darf nicht leer sein.");
         }
         String city = input.trim();
-        if (!city.matches("[\\p{L} -]{2,50}")) {
+        if (city.length() < 2) {
+            throw new InvalidInputException("Die Stadt ist zu kurz.");
+        }
+        if (!city.matches("[\\p{L} -]+")) {
             throw new InvalidInputException("Die Stadt darf nur Buchstaben enthalten.");
         }
         return city;

@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+// Holt die Wetterdaten von der Open-Meteo API aus dem Internet.
 public class WeatherApi {
 
     private final HttpClient client = HttpClient.newHttpClient();

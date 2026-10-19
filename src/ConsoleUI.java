@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+// Liest die Eingaben des Benutzers und zeigt die Ausgaben an.
 public class ConsoleUI {
 
     private final Scanner scanner = new Scanner(System.in);

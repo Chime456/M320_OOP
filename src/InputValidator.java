@@ -1,3 +1,4 @@
+// Prüft, ob die eingegebene Stadt gültig ist.
 public class InputValidator {
 
     public String validateCity(String input) throws InvalidInputException {

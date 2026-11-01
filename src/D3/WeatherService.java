@@ -1,9 +1,11 @@
+package D3;
+
 import java.io.IOException;
 
 // Holt die Temperatur und berechnet die Kleidungsempfehlung.
 public class WeatherService {
 
-    // Delegation: WeatherService hat ein Objekt, das die API aufruft.
+    //API aufrufen
     private final WeatherApi api;
 
     public WeatherService(WeatherApi api) {
@@ -11,7 +13,7 @@ public class WeatherService {
     }
 
     public double getTemperature(String city) throws InvalidInputException, IOException, InterruptedException {
-        // Delegation an WeatherApi: Daten aus dem Internet holen
+        // Delegation an D3.WeatherApi: Daten aus dem Internet holen
         double[] coordinates = api.findCoordinates(city);
         return api.getTemperature(coordinates[0], coordinates[1]);
     }

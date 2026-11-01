@@ -1,0 +1,89 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+package "Controller" {
+  class MediumController
+  class MitgliedController
+  class AusleiheController
+}
+
+package "Service" {
+  class MediumService
+  class MitgliedService
+  class AusleiheService
+  class MediumFactory {
+    +erstelle(dto): Medium
+  }
+}
+
+package "Model" {
+  abstract class Medium {
+    #id: Long
+    #titel: String
+    #verfuegbar: boolean
+    +{abstract} getAusleihdauerTage(): int
+  }
+  class Buch {
+    -autor: String
+    -seitenzahl: int
+  }
+  class DVD {
+    -laufzeitMinuten: int
+  }
+  class Zeitschrift {
+    -ausgabeNummer: int
+  }
+  class Mitglied {
+    -id: Long
+    -name: String
+    -typ: MitgliedTyp
+  }
+  enum MitgliedTyp {
+    STANDARD
+    STUDENT
+  }
+  class Ausleihe {
+    -ausleihDatum: LocalDate
+    -faelligAm: LocalDate
+    +istUeberfaellig(): boolean
+    +berechneGebuehr(): double
+  }
+}
+
+package "Gebuehr" {
+  interface GebuehrStrategy {
+    +berechne(tage: long): double
+  }
+  class StandardGebuehr
+  class StudentenGebuehr
+}
+
+package "Repository" {
+  interface MediumRepository
+  interface MitgliedRepository
+  interface AusleiheRepository
+}
+
+Medium <|-- Buch
+Medium <|-- DVD
+Medium <|-- Zeitschrift
+
+GebuehrStrategy <|.. StandardGebuehr
+GebuehrStrategy <|.. StudentenGebuehr
+
+MediumController --> MediumService
+MitgliedController --> MitgliedService
+AusleiheController --> AusleiheService
+
+MediumService --> MediumFactory
+MediumService --> MediumRepository
+MitgliedService --> MitgliedRepository
+AusleiheService --> AusleiheRepository
+AusleiheService --> MediumRepository
+
+MediumFactory ..> Medium : erstellt
+Ausleihe --> Medium
+Ausleihe --> Mitglied
+Mitglied --> MitgliedTyp
+Ausleihe ..> GebuehrStrategy : nutzt
+@enduml

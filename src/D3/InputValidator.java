@@ -1,3 +1,5 @@
+package D3;
+
 // Prüft, ob die eingegebene Stadt gültig ist.
 public class InputValidator {
 

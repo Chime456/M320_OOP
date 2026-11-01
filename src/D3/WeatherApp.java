@@ -1,9 +1,11 @@
+package D3;
+
 import java.io.IOException;
 
 // Steuert den Ablauf und gibt die Aufgaben an die anderen Klassen weiter.
 public class WeatherApp {
 
-    // Delegation: WeatherApp hat diese Objekte als Attribute
+    // Delegation: D3.WeatherApp hat diese Objekte als Attribute
     private final ConsoleUI ui = new ConsoleUI();
     private final InputValidator validator = new InputValidator();
     private final WeatherService service = new WeatherService(new WeatherApi());

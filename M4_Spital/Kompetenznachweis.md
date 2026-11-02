@@ -1,72 +1,76 @@
-# Spitalverwaltung
-## Ziel
+# Kompetenznachweis M4: Spitalverwaltung
 
-Mit Hilfe von KI und den Unterrichtsinhalten erstellen Sie eine Applikation, welche die OO-Programmierthemen abdeckt, dh. Delegation, Polymorphismus. Sie wenden dabei auch Design Patterns an (mind. 2).
+Weitere Dokumente: [KI-Doku](KI-Doku.md) · [Clean Code](cleancode.md) · [alle Diagramme als PlantUML](Diagramme.puml)
 
-## Status der Kompetenzen
+Code: [`src/M4`](../src/M4)
 
-### M4
+## 1. Beschreibung der Applikation
 
-| Anforderung | Status | Stelle im Dokument |
-|---|---|---|
-| Grobes Klassendiagramm mit Hierarchie und Interfaces | umgesetzt | «Klassendiagramm (Skizze, nur Klassennamen)» |
-| Detailliertes Klassendiagramm nach Abschluss | umgesetzt | «Detailliertes Klassendiagramm» |
-| Sequenzdiagramm für einen Use Case | umgesetzt | «Sequenzdiagramm: UC3 Patient entlassen» |
-| Beschreibung, Anforderungen und Use Cases | umgesetzt | «Beschreibung der Applikation», «Anforderungen», «Use Cases» |
-| Prompts dokumentiert | umgesetzt | [KI-Doku.md](KI-Doku.md) |
+Die Konsolenapplikation verwaltet ein kleines Spital. Patienten werden aufgenommen, einem Zimmer, einem Arzt und einer Pflegekraft zugewiesen, bei Bedarf verlegt und entlassen. Bei der Entlassung entsteht automatisch eine Rechnung.
 
-D4, V4 und Q4 stehen in [cleancode.md](cleancode.md), der KI-Einsatz und die Prompts in [KI-Doku.md](KI-Doku.md).
-
-## Beschreibung der Applikation
-
-Die Applikation verwaltet ein kleines Spital. Patienten werden aufgenommen, einem Zimmer, einem Arzt und einer Pflegekraft zugewiesen, bei Bedarf verlegt und entlassen. Bei der Entlassung erstellt das System automatisch eine Rechnung.
-
-Es gibt drei Zimmertypen (Mehrbett-, Einzel- und Intensivzimmer) mit unterschiedlicher Bettenzahl und Tagespauschale. Die Rechnung hängt zusätzlich von der Versicherungsklasse ab (allgemein, halbprivat, privat). Volle Zimmer, überlastetes Personal und falsche Eingaben werden mit Fehlermeldungen abgefangen.
-
-### Muss-Kriterien
+### Ziel (Muss-Kriterien)
 
 - Patienten aufnehmen, verlegen und entlassen
 - Patienten einem Zimmer, einem Arzt und einer Pflegekraft zuweisen
 - Drei Zimmertypen mit eigener Bettenzahl und Tagespauschale
-- Automatische Rechnung bei der Entlassung, abhängig von Zimmer, Aufenthaltsdauer und Versicherungsklasse
-- Daten werden dauerhaft gespeichert
-- Fehlermeldungen bei vollen Zimmern, überlastetem Personal und falschen Eingaben
+- Automatische Rechnung, abhängig von Zimmer, Aufenthaltsdauer und Versicherungsklasse
+- Daten bleiben nach einem Neustart erhalten
+- Fehlermeldungen bei falschen Eingaben, vollen Zimmern und überlastetem Personal
 
 ### Nice-to-have
 
-- Personal in der Applikation erfassen (umgesetzt als UC8), bearbeiten ist nicht umgesetzt
-- Patienten nach Namen suchen
-- Rechnung als Datei exportieren
-- Grafische Oberfläche oder Web-Oberfläche
+| Idee | Stand |
+|---|---|
+| Personal in der Applikation erfassen | umgesetzt (UC8) |
+| Personal bearbeiten | nicht umgesetzt |
+| Patienten nach Namen suchen | nicht umgesetzt |
+| Rechnung als Datei exportieren | nicht umgesetzt |
+| Grafische Oberfläche oder Web-Oberfläche | nicht umgesetzt |
 
-## Anforderungen
+## 2. Anforderungen
 
 | Nr. | Anforderung |
 |---|---|
-| A1 | Ein Zimmer kann nicht mehr Patienten aufnehmen, als es Betten hat. |
-| A2 | Ärzte und Pflegekräfte haben eine maximale Anzahl Patienten. |
+| A1 | Ein Zimmer nimmt nicht mehr Patienten auf, als es Betten hat. |
+| A2 | Ärzte betreuen maximal 10 Patienten, Pflegekräfte maximal 6. |
 | A3 | Bei einer Verlegung wird das alte Bett frei und ein Bett im neuen Zimmer belegt. |
 | A4 | Bei der Entlassung werden Bett und Personal freigegeben. |
-| A5 | Der Rechnungsbetrag ergibt sich aus Anzahl Tage, Tagespauschale und Versicherungsklasse. |
-| A6 | Benutzereingaben werden geprüft. Bei Fehlern erscheint eine Meldung und die Applikation läuft weiter. |
+| A5 | Rechnungsbetrag = Anzahl Tage × Tagespauschale × Faktor der Versicherungsklasse. |
+| A6 | Eingaben werden geprüft. Bei einem Fehler erscheint eine Meldung und die Applikation läuft weiter. |
 | A7 | Daten bleiben nach einem Neustart erhalten. |
-| A8 | User-Interface, Logik und persistente Daten sind sauber getrennt. |
+| A8 | User-Interface, Logik und persistente Daten sind getrennt. |
 
-## Use Cases
+### Festgelegte Werte
 
-| Nr. | Use Case | Beschreibung |
+Die Werte sind frei gewählte Beispielwerte und keine echten Spitaltarife.
+
+| Zimmertyp | Betten | Tagespauschale |
+|---|---|---|
+| Mehrbettzimmer | 4 | CHF 300 |
+| Einzelzimmer | 1 | CHF 500 |
+| Intensivzimmer | 2 | CHF 1200 |
+
+| Versicherungsklasse | Faktor | Beispiel: 5 Tage im Mehrbettzimmer (CHF 1500) |
+|---|---|---|
+| Allgemein | 1.0 | CHF 1500 |
+| Halbprivat | 1.3 | CHF 1950 |
+| Privat | 1.6 | CHF 2400 |
+
+Ein Aufenthalt wird mit mindestens einem Tag verrechnet.
+
+## 3. Use Cases
+
+| Nr. | Use Case | Was der Benutzer macht |
 |---|---|---|
 | UC1 | Patient aufnehmen | Patient erfassen und Zimmer, Arzt und Pflegekraft zuweisen |
 | UC2 | Patient verlegen | Patient in ein anderes Zimmer verlegen |
-| UC3 | Patient entlassen | Aufenthalt beenden und Rechnung automatisch erstellen |
-| UC4 | Zimmer erfassen | Neues Zimmer mit Typ und Nummer anlegen |
-| UC5 | Zimmer anzeigen | Zimmer mit freien und belegten Betten anzeigen |
-| UC6 | Personal anzeigen | Ärzte und Pflegekräfte mit ihrer Auslastung anzeigen |
-| UC7 | Rechnungen anzeigen | Erstellte Rechnungen anzeigen |
+| UC3 | Patient entlassen | Aufenthalt beenden, Rechnung wird automatisch erstellt |
+| UC4 | Zimmer erfassen | Neues Zimmer mit Nummer und Typ anlegen |
+| UC5 | Zimmer anzeigen | Zimmer mit freien Betten ansehen |
+| UC6 | Personal anzeigen | Ärzte und Pflegekräfte mit Auslastung ansehen |
+| UC7 | Rechnungen anzeigen | Erstellte Rechnungen ansehen |
 | UC8 | Personal erfassen | Neuen Arzt oder neue Pflegekraft anlegen |
-| UC9 | Patienten anzeigen | Aktive Patienten anzeigen |
-
-### Use-Case-Diagramm
+| UC9 | Patienten anzeigen | Aktive Patienten ansehen |
 
 ```plantuml
 @startuml
@@ -85,8 +89,7 @@ rectangle "Spitalverwaltung" {
   usecase "UC7 Rechnungen anzeigen" as UC7
   usecase "UC8 Personal erfassen" as UC8
   usecase "UC9 Patienten anzeigen" as UC9
-  usecase "Rechnung erstellen" as Rechnung
-  usecase "Zimmer und Personal zuweisen" as Zuweisen
+  usecase "Rechnung erstellen" as Erstellen
 }
 
 Mitarbeiter --> UC1
@@ -99,48 +102,19 @@ Mitarbeiter --> UC7
 Mitarbeiter --> UC8
 Mitarbeiter --> UC9
 
-UC1 ..> Zuweisen : <<include>>
-UC3 ..> Rechnung : <<include>>
+UC3 ..> Erstellen : <<include>>
 @enduml
 ```
 
-### Use-Case-Beschreibung: UC1 Patient aufnehmen
+## 4. Geplante Architektur (Skizze)
 
-| Punkt | Beschreibung |
-|---|---|
-| **Name** | UC1 Patient aufnehmen |
-| **Akteur** | Spitalmitarbeiter |
-| **Ziel** | Ein neuer Patient ist erfasst und hat ein Zimmer, einen Arzt und eine Pflegekraft. |
-| **Vorbedingung** | Zimmer und Personal sind im System vorhanden. |
-| **Eingaben** | Name, Versicherungsklasse, Eintrittsdatum (leer = heute), Zimmer-ID, Arzt-ID, Pflegekraft-ID |
-| **Hauptablauf** | 1. Der Mitarbeiter wählt «Patient aufnehmen».<br>2. Der Mitarbeiter gibt die Daten ein.<br>3. `ConsoleUI` prüft die Eingaben.<br>4. `SpitalService` sucht Zimmer, Arzt und Pflegekraft.<br>5. `SpitalService` prüft, ob ein Bett frei ist und das Personal noch Kapazität hat.<br>6. Bett und Personal werden belegt, der Eintritt wird gesetzt.<br>7. Der Patient wird gespeichert.<br>8. `ConsoleUI` zeigt eine Bestätigung an. |
-| **Fehlerfall: falsche Eingabe** | Zum Beispiel Text statt ID. Es erscheint eine Fehlermeldung, nichts wird gespeichert. |
-| **Fehlerfall: nicht gefunden** | Zimmer oder Personal existiert nicht. Es erscheint eine Fehlermeldung, nichts wird gespeichert. |
-| **Fehlerfall: Zimmer voll** | Im Zimmer ist kein Bett frei. Es erscheint eine Fehlermeldung, nichts wird gespeichert. |
-| **Fehlerfall: Personal überlastet** | Arzt oder Pflegekraft hat die maximale Anzahl Patienten erreicht. Es erscheint eine Fehlermeldung, nichts wird gespeichert. |
-| **Nachbedingung** | Der Patient ist gespeichert, ein Bett ist belegt, und die Auslastung des Personals ist erhöht. |
+Die Skizze zeigt nur Klassen und Beziehungen: die Hierarchie `Personal` → `Arzt`, `Pflegekraft` und die Interfaces `VersicherungStrategy` und `Repository<T>`.
 
-## Aufbau
-
-Die Applikation hat **10 Klassen**, dazu 2 Interfaces und 2 Enums.
-
-| Schicht | Typen | Aufgabe |
-|---|---|---|
-| UI | `ConsoleUI` | Applikation starten, Eingaben lesen und prüfen, Ausgaben anzeigen |
-| Logik | `SpitalService` | Abläufe und Regeln umsetzen, Rechnung erstellen |
-| Model | `Patient`, `Zimmer`, `Personal`, `Arzt`, `Pflegekraft`, `Rechnung`, `ZimmerTyp`, `VersicherungsKlasse`, `VersicherungStrategy` | Daten und Regeln der einzelnen Objekte |
-| Persistenz | `Repository<T>`, `DateiRepository<T>` | Daten speichern und laden, generisch für jeden Datentyp |
-| Fehler | `SpitalException` | Eigene Exception für alle Fehlerfälle |
-
-Die 10 Klassen sind: `ConsoleUI`, `SpitalService`, `DateiRepository<T>`, `Patient`, `Zimmer`, `Personal`, `Arzt`, `Pflegekraft`, `Rechnung`, `SpitalException`.
-
-**Umfang:** 958 Zeilen in `src/M4`, davon 798 ohne Leerzeilen.
-
-### Klassendiagramm (Skizze, nur Klassennamen)
+*Hinweis: Diese Skizze wurde für diese Fassung der Dokumentation neu gezeichnet und ist darum nicht älter als der Code. Laut Git-Verlauf entstand der Code vor der Dokumentation.*
 
 ```plantuml
 @startuml
-title Spitalverwaltung - Klassendiagramm
+title Spitalverwaltung - grobes Klassendiagramm
 hide members
 
 package "UI" {
@@ -154,14 +128,11 @@ package "Logik" {
 package "Model" {
   class Patient
   class Zimmer
+  class Rechnung
   abstract class Personal
   class Arzt
   class Pflegekraft
-  class Rechnung
-  enum ZimmerTyp
   interface VersicherungStrategy <<Strategy>>
-  enum VersicherungsKlasse
-  class SpitalException
 }
 
 package "Persistenz" {
@@ -171,34 +142,57 @@ package "Persistenz" {
 
 Personal <|-- Arzt
 Personal <|-- Pflegekraft
-Exception <|-- SpitalException
-
-VersicherungStrategy <|.. VersicherungsKlasse
 Repository <|.. DateiRepository
 
 ConsoleUI --> SpitalService
-SpitalService --> Repository : Patient, Zimmer, Personal, Rechnung
+SpitalService --> Repository
 SpitalService ..> Rechnung : erstellt
-SpitalService ..> SpitalException : wirft
-ConsoleUI ..> SpitalException : wirft und faengt
-ConsoleUI ..> DateiRepository : erstellt
-
-Patient --> VersicherungsKlasse
-Zimmer --> ZimmerTyp
-Rechnung --> ZimmerTyp
-Rechnung --> VersicherungsKlasse
-Rechnung ..> Patient : liest Werte
-Rechnung ..> Zimmer : liest Werte
+Patient --> VersicherungStrategy
 @enduml
 ```
 
-### Detailliertes Klassendiagramm (Stand nach Abschluss des Projekts)
-
-Das Diagramm oben ist die grobe Skizze der Architektur. Dieses Diagramm zeigt den umgesetzten Code mit den Abstraktionen: `Personal` ist eine abstrakte Klasse, `VersicherungStrategy` und `Repository<T>` sind Interfaces. Einfache Getter sind weggelassen, damit das Diagramm lesbar bleibt.
+Grobes Sequenzdiagramm für den typischen Use Case UC3:
 
 ```plantuml
 @startuml
-title Spitalverwaltung - Detailliertes Klassendiagramm
+title UC3 Patient entlassen - grob
+
+actor Benutzer
+participant ConsoleUI
+participant SpitalService
+participant "Repository<T>" as Repository
+participant Rechnung
+
+Benutzer -> ConsoleUI : Patienten-ID eingeben
+ConsoleUI -> SpitalService : entlassen(patientId)
+SpitalService -> Repository : Patient, Zimmer und Personal laden
+SpitalService -> SpitalService : Bett und Personal freigeben
+SpitalService -> Rechnung ** : erstellen
+SpitalService -> Repository : Aenderungen und Rechnung speichern
+SpitalService --> ConsoleUI : rechnung
+ConsoleUI --> Benutzer : Rechnung anzeigen
+@enduml
+```
+
+## 5. Umgesetzte Architektur
+
+Die Applikation hat **10 Klassen, 2 Interfaces und 2 Enums** mit insgesamt rund 960 Zeilen (inklusive Leerzeilen und Getter).
+
+| Schicht | Typen | Aufgabe |
+|---|---|---|
+| UI | `ConsoleUI` | Starten, Eingaben lesen und prüfen, Ausgaben anzeigen |
+| Logik | `SpitalService` | Abläufe und Regeln, Rechnung auslösen |
+| Model | `Patient`, `Zimmer`, `Personal`, `Arzt`, `Pflegekraft`, `Rechnung`, `ZimmerTyp`, `VersicherungsKlasse`, `VersicherungStrategy` | Daten und Verhalten der einzelnen Objekte |
+| Persistenz | `Repository<T>`, `DateiRepository<T>` | Speichern und Laden mit Java-Serialisierung im Ordner `daten` |
+| Fehler | `SpitalException` | Eigene Exception für alle erwarteten Fehler |
+
+### Detailliertes Klassendiagramm
+
+Getter und die Anzeigemethoden von `ConsoleUI` sind der Übersicht halber weggelassen.
+
+```plantuml
+@startuml
+title Spitalverwaltung - detailliertes Klassendiagramm
 skinparam classAttributeIconSize 0
 
 package "UI" {
@@ -211,8 +205,14 @@ package "UI" {
     -patientAufnehmen(): void
     -patientVerlegen(): void
     -patientEntlassen(): void
+    -zimmerErfassen(): void
+    -personalErfassen(): void
     -leseId(text: String): long
     -leseName(text: String): String
+    -leseZimmernummer(): String
+    -leseVersicherung(): VersicherungsKlasse
+    -leseZimmerTyp(): ZimmerTyp
+    -leseAuswahl(text: String, anzahl: int): int
     -leseEintritt(): LocalDate
   }
 }
@@ -231,6 +231,9 @@ package "Logik" {
     +erfasseArzt(name: String): Arzt
     +erfassePflegekraft(name: String): Pflegekraft
     +getAktivePatienten(): List<Patient>
+    +getZimmer(): List<Zimmer>
+    +getPersonal(): List<Personal>
+    +getRechnungen(): List<Rechnung>
     -pruefeAufnahmeMoeglich(zielZimmer: Zimmer, arzt: Personal, pflegekraft: Personal): void
     -findeAktivenPatienten(id: long): Patient
   }
@@ -240,10 +243,11 @@ package "Model" {
   class Patient {
     -id: long
     -name: String
+    -versicherung: VersicherungsKlasse
+    -zimmerId: long
     -arztId: long
     -pflegekraftId: long
     -eintritt: LocalDate
-    -zimmerId: long
     -austritt: LocalDate
     +verlegeNach(neueZimmerId: long): void
     +entlasse(datum: LocalDate): void
@@ -254,6 +258,7 @@ package "Model" {
   class Zimmer {
     -id: long
     -nummer: String
+    -typ: ZimmerTyp
     -belegteBetten: int
     +istVoll(): boolean
     +belegeBett(): void
@@ -288,6 +293,8 @@ package "Model" {
     -id: long
     -patientName: String
     -zimmerNummer: String
+    -zimmerTyp: ZimmerTyp
+    -versicherung: VersicherungsKlasse
     -anzahlTage: long
     -zimmerKosten: double
     -totalBetrag: double
@@ -342,59 +349,43 @@ package "Persistenz" {
 Personal <|-- Arzt
 Personal <|-- Pflegekraft
 Exception <|-- SpitalException
-
 VersicherungStrategy <|.. VersicherungsKlasse
 Repository <|.. DateiRepository
 
-ConsoleUI --> "1" SpitalService : service
-SpitalService --> "4" Repository : Patient, Zimmer, Personal, Rechnung
+ConsoleUI --> "1" SpitalService
+SpitalService --> "4" Repository
+ConsoleUI ..> DateiRepository : erstellt in main()
+SpitalService ..> Patient : erstellt
+SpitalService ..> Zimmer : erstellt
+SpitalService ..> Arzt : erstellt
+SpitalService ..> Pflegekraft : erstellt
 SpitalService ..> Rechnung : erstellt
 SpitalService ..> SpitalException : wirft
 ConsoleUI ..> SpitalException : wirft und faengt
-ConsoleUI ..> DateiRepository : erstellt
 
-Patient --> "1" VersicherungsKlasse : versicherung
-Zimmer --> "1" ZimmerTyp : typ
-Rechnung --> "1" ZimmerTyp : zimmerTyp
-Rechnung --> "1" VersicherungsKlasse : versicherung
+Patient --> "1" VersicherungsKlasse
+Zimmer --> "1" ZimmerTyp
+Rechnung --> "1" ZimmerTyp
+Rechnung --> "1" VersicherungsKlasse
 Rechnung ..> Patient : liest Werte
 Rechnung ..> Zimmer : liest Werte
 @enduml
 ```
 
-### Details der Klassen
-
-Die wichtigsten Attribute und Methoden noch einmal als Übersicht:
-
-| Typ | Wichtige Attribute | Wichtige Methoden |
-|---|---|---|
-| `ConsoleUI` | `service` | `main()`, `start()`, `fuehreAus()`, `patientAufnehmen()`, `patientVerlegen()`, `patientEntlassen()`, `leseId()`, `leseName()` |
-| `SpitalService` | `patienten`, `zimmer`, `personal`, `rechnungen` | `legeStartdatenAn()`, `aufnehmen()`, `verlegen()`, `entlassen()`, `erfasseZimmer()`, `erfasseArzt()`, `erfassePflegekraft()` |
-| `Patient` | `id`, `name`, `versicherung`, `zimmerId`, `arztId`, `pflegekraftId`, `eintritt`, `austritt` | `verlegeNach()`, `entlasse()`, `istEntlassen()`, `getAnzahlTage()` |
-| `Zimmer` | `id`, `nummer`, `typ`, `belegteBetten` | `istVoll()`, `belegeBett()`, `gibBettFrei()`, `getFreieBetten()` |
-| `Personal` (abstrakt) | `id`, `name`, `anzahlPatienten` | `istUeberlastet()`, `nimmPatient()`, `gibPatientAb()`, `getMaxPatienten()`, `getRolle()` |
-| `Arzt`, `Pflegekraft` | `MAX_PATIENTEN` | `getMaxPatienten()`, `getRolle()` |
-| `Rechnung` | `id`, `patientName`, `zimmerNummer`, `anzahlTage`, `zimmerKosten`, `totalBetrag`, `datum` | Getter |
-| `ZimmerTyp` (Enum) | `bezeichnung`, `bettenzahl`, `tagespauschale` | Getter |
-| `VersicherungsKlasse` (Enum) | `bezeichnung` | `berechne()` |
-| `VersicherungStrategy` (Interface) | – | `berechne()` |
-| `Repository<T>` (Interface) | – | `speichern()`, `findeNachId()`, `findeAlle()` |
-| `DateiRepository<T>` | `datei`, `idLeser`, `objekte` | `speichern()`, `findeNachId()`, `findeAlle()` |
-| `SpitalException` | – | Konstruktor mit Meldung |
-
-### Sequenzdiagramm: UC3 Patient entlassen
+### Detailliertes Sequenzdiagramm: UC3 Patient entlassen
 
 ```plantuml
 @startuml
-title Use Case: Patient entlassen und Rechnung erstellen
+title UC3 Patient entlassen - detailliert
 
 actor Benutzer
 participant ConsoleUI
 participant SpitalService
 participant "patienten: Repository<Patient>" as Patienten
-participant "zimmer, personal: Repository" as Stammdaten
+participant "zimmer: Repository<Zimmer>" as ZimmerRepo
+participant "personal: Repository<Personal>" as PersonalRepo
 participant "patient: Patient" as Patient
-participant "zimmer: Zimmer" as Zimmer
+participant "patientenZimmer: Zimmer" as Zimmer
 participant "arzt, pflegekraft: Personal" as Personal
 participant "rechnung: Rechnung" as Rechnung
 participant "versicherung: VersicherungsKlasse" as Versicherung
@@ -403,29 +394,38 @@ participant "rechnungen: Repository<Rechnung>" as Rechnungen
 Benutzer -> ConsoleUI : Patienten-ID eingeben
 ConsoleUI -> ConsoleUI : leseId(text)
 
-alt ungueltige Eingabe
+alt Eingabe ist keine gueltige ID
   ConsoleUI --> Benutzer : Fehlermeldung (SpitalException)
-else gueltige Eingabe
+else Eingabe ist gueltig
   ConsoleUI -> SpitalService : entlassen(patientId)
   SpitalService -> Patienten : findeNachId(patientId)
+  Patienten --> SpitalService : Optional<Patient>
 
   alt nicht gefunden oder bereits entlassen
-    Patienten --> SpitalService : Optional.empty oder entlassener Patient
     SpitalService --> ConsoleUI : SpitalException
     ConsoleUI --> Benutzer : Fehlermeldung
   else aktiver Patient
-    Patienten --> SpitalService : patient
-    SpitalService -> Stammdaten : findeNachId(zimmerId, arztId, pflegekraftId)
-    Stammdaten --> SpitalService : zimmer, arzt, pflegekraft
+    SpitalService -> ZimmerRepo : findeNachId(zimmerId)
+    ZimmerRepo --> SpitalService : patientenZimmer
+    SpitalService -> PersonalRepo : findeNachId(arztId)
+    PersonalRepo --> SpitalService : arzt
+    SpitalService -> PersonalRepo : findeNachId(pflegekraftId)
+    PersonalRepo --> SpitalService : pflegekraft
+
     SpitalService -> Patient : entlasse(heute)
     SpitalService -> Zimmer : gibBettFrei()
-    SpitalService -> Personal : gibPatientAb()
-    SpitalService -> Rechnung ** : new Rechnung(id, patient, zimmer, heute)
+    SpitalService -> Personal : gibPatientAb() fuer arzt
+    SpitalService -> Personal : gibPatientAb() fuer pflegekraft
+
+    SpitalService -> Rechnung ** : new Rechnung(id, patient, patientenZimmer, heute)
     Rechnung -> Patient : getAnzahlTage()
     Patient --> Rechnung : anzahlTage
     Rechnung -> Versicherung : berechne(zimmerKosten)
     Versicherung --> Rechnung : totalBetrag
-    SpitalService -> Stammdaten : speichern(zimmer, arzt, pflegekraft)
+
+    SpitalService -> ZimmerRepo : speichern(patientenZimmer)
+    SpitalService -> PersonalRepo : speichern(arzt)
+    SpitalService -> PersonalRepo : speichern(pflegekraft)
     SpitalService -> Patienten : speichern(patient)
     SpitalService -> Rechnungen : speichern(rechnung)
     SpitalService --> ConsoleUI : rechnung
@@ -435,118 +435,119 @@ end
 @enduml
 ```
 
-## Design Patterns
+## 6. Design Patterns
 
-| Pattern | Wo | Warum es hier Sinn macht |
+| Pattern | Wo im Code | Warum es hier Sinn macht |
 |---|---|---|
-| **Strategy** | Interface `VersicherungStrategy`, umgesetzt von den Werten des Enums `VersicherungsKlasse` | Jede Versicherungsklasse rechnet anders. `Rechnung` ruft nur `berechne()` auf und braucht keine langen `if`-Abfragen. Das Enum spart drei eigene Klassen. |
-| **Repository** | Interface `Repository<T>`, umgesetzt von `DateiRepository<T>` | Die Logik kennt nur das Interface und nicht die Art der Speicherung. So bleibt die Trennung von Logik und persistenten Daten sauber. |
+| **Strategy** | Interface `VersicherungStrategy`, umgesetzt von den Werten des Enums `VersicherungsKlasse`, aufgerufen in `Rechnung` | Jede Versicherungsklasse berechnet den Betrag auf ihre Art. `Rechnung` ruft nur `berechne()` auf und braucht keine `if`-Kette. Eine neue Klasse kommt als neuer Enum-Wert dazu, ohne dass `Rechnung` sich ändert. |
+| **Repository** | Interface `Repository<T>`, umgesetzt von `DateiRepository<T>`, verwendet in `SpitalService` | `SpitalService` kennt nur das Interface. Die Speicherung in Dateien könnte durch eine Datenbank ersetzt werden, ohne die Logik anzupassen. |
 
-## Umsetzung der Objektorientierung
+## 7. Objektorientierung im Projekt
 
-- **Delegation:** `ConsoleUI` gibt die Abläufe an `SpitalService` weiter. `SpitalService` delegiert das Speichern an `Repository<T>`, `Rechnung` delegiert die Berechnung an die Versicherungsklasse. Das sind HAT-Beziehungen: `SpitalService` hat die Repositories als Attribute und erhält sie als Parameter im Konstruktor (Aggregation).
-- **Generics:** Die eigene Klasse `DateiRepository<T>` funktioniert für `Patient`, `Zimmer`, `Personal` und `Rechnung`, ohne den Code mehrfach zu schreiben.
-- **Vererbung:** `Personal` ist eine abstrakte Klasse, weil `Arzt` und `Pflegekraft` gemeinsame Daten und gemeinsames Verhalten haben. Die Zimmertypen unterscheiden sich nur in Bettenzahl und Tagespauschale, darum genügt dort das Enum `ZimmerTyp` ohne Vererbung.
-- **Polymorphismus:** `getMaxPatienten()` und `berechne()` werden je nach Objekt unterschiedlich ausgeführt.
-- **Interfaces:** `VersicherungStrategy` und `Repository<T>`.
+### Delegation
 
-## Validierung und Exceptions
+`ConsoleUI.patientEntlassen()` gibt die Arbeit an `SpitalService.entlassen()` weiter. `SpitalService` delegiert das Speichern an `Repository<T>`, und `Rechnung` delegiert die Berechnung an `versicherung.berechne()`.
 
-Alle Fehler verwenden die eigene Klasse `SpitalException` mit einer passenden Meldung:
+Delegation beruht auf HAT-Beziehungen: Die Klasse hat eine Referenz auf das andere Objekt. So werden die Objekte registriert:
 
-| Fall | Beispiel |
-|---|---|
-| Falsche Eingabe | Text statt ID |
-| Nicht gefunden | Patient, Zimmer oder Personal existiert nicht |
-| Zimmer voll | Im Zimmer ist kein Bett mehr frei |
-| Personal überlastet | Arzt oder Pflegekraft hat die maximale Anzahl Patienten erreicht |
-
-`ConsoleUI` prüft die Eingaben, fängt die Exceptions ab und zeigt die Meldung an.
-
-## Festgelegte Werte
-
-Die Werte sind frei gewählte Beispielwerte für dieses Projekt und keine echten Spitaltarife.
-
-| Zimmertyp | Betten | Tagespauschale |
+| Variante | Stelle im Code | HAT-Beziehung |
 |---|---|---|
-| Mehrbettzimmer | 4 | CHF 300 |
-| Einzelzimmer | 1 | CHF 500 |
-| Intensivzimmer | 2 | CHF 1200 |
+| Bei der Deklaration instanziieren | `ConsoleUI`: `private final Scanner scanner = new Scanner(System.in)` | Komposition |
+| Über den Konstruktor übergeben | `SpitalService` erhält die vier Repositories, `ConsoleUI` erhält den `SpitalService` | Aggregation |
+| Im Konstruktor instanziieren | `DateiRepository`: `objekte = ladeAusDatei()` | Komposition |
 
-| Versicherungsklasse | Faktor | Beispiel: 5 Tage im Mehrbettzimmer (CHF 1500) |
+Setter und Lazy Initialization sind nicht nötig, weil alle Abhängigkeiten beim Start bekannt sind.
+
+### Vererbung und Polymorphismus
+
+- **Vererbung:** `Arzt` und `Pflegekraft` erben von der abstrakten Klasse `Personal`, weil beide die gleichen Daten und das gleiche Verhalten haben und sich nur in Rolle und Maximalzahl unterscheiden.
+- **Keine Vererbung bei den Zimmern:** Die Zimmertypen unterscheiden sich nur in ihren Werten und nicht im Verhalten. Darum genügt das Enum `ZimmerTyp`.
+- **Überschreiben und Dynamic Binding:** `Personal.istUeberlastet()` ruft `getMaxPatienten()` auf. Erst zur Laufzeit entscheidet der echte Objekttyp, ob 10 oder 6 gilt. Dasselbe gilt für `berechne()` bei den Enum-Werten.
+- **Überladen (statischer Polymorphismus):** wird im eigenen Code nicht verwendet, weil keine Methode mehrere Parameterlisten braucht.
+- **Upcasting:** `Personal person = rolle.equals("1") ? service.erfasseArzt(name) : service.erfassePflegekraft(name);` in `ConsoleUI.personalErfassen()`.
+- **Typprüfung statt Downcast:** `SpitalService.findeArzt()` prüft mit `Arzt.class::isInstance`, ob die ID wirklich zu einem Arzt gehört. So kann keine `ClassCastException` entstehen.
+
+### Interfaces und Generics
+
+Die Interfaces sind `VersicherungStrategy` und `Repository<T>`. Die eigene generische Klasse `DateiRepository<T>` wird für `Patient`, `Zimmer`, `Personal` und `Rechnung` verwendet, ohne dass der Code mehrfach geschrieben werden muss.
+
+## 8. Validierung und Exception Handling
+
+Alle erwarteten Fehler verwenden `SpitalException`. `ConsoleUI.start()` fängt sie ab, zeigt die Meldung an und führt das Menü weiter.
+
+| Fall | Geprüft in | Meldung aus dem Test |
 |---|---|---|
-| Allgemein | 1.0 | CHF 1500 |
-| Halbprivat | 1.3 | CHF 1950 |
-| Privat | 1.6 | CHF 2400 |
+| Falsche Menüauswahl | `ConsoleUI.fuehreAus()` | Bitte eine Zahl aus dem Menü wählen. |
+| Ungültiger Name | `ConsoleUI.leseName()` | Der Name muss 2-50 Zeichen lang sein und darf keine Zahlen enthalten. |
+| Text statt ID | `ConsoleUI.leseId()` | Die ID muss eine ganze Zahl sein: 'abc' |
+| Falsches Datum | `ConsoleUI.leseEintritt()` | Das Datum muss das Format JJJJ-MM-TT haben: 'morgen' |
+| Zimmer existiert nicht | `SpitalService.findeZimmer()` | Zimmer mit ID 99 wurde nicht gefunden. |
+| Pflegekraft-ID statt Arzt-ID | `SpitalService.findeArzt()` | Arzt mit ID 3 wurde nicht gefunden. |
+| Zimmer voll | `SpitalService.pruefeAufnahmeMoeglich()` | Zimmer 102 ist voll. |
+| Personal überlastet | `SpitalService.pruefeNichtUeberlastet()` | Pflegekraft Anna Frei ist überlastet (maximal 6 Patienten). |
+| Doppelte Zimmernummer | `SpitalService.erfasseZimmer()` | Die Zimmernummer 103 ist bereits vergeben. |
+| Patient bereits entlassen | `SpitalService.findeAktivenPatienten()` | Patient Anna Muster ist bereits entlassen. |
 
-Berechnung: `Tage × Tagespauschale × Faktor`
+## 9. Starten und Demonstration
 
-**Bekannte Einschränkung:** Nach einer Verlegung wird der ganze Aufenthalt zur Tagespauschale des letzten Zimmers verrechnet, weil der Patient nur sein aktuelles Zimmer speichert.
+Getestet mit Java 26 in Git Bash, im Hauptordner des Repositorys:
 
-| Personal | Maximale Anzahl Patienten |
-|---|---|
-| Arzt | 10 |
-| Pflegekraft | 6 |
+```bash
+javac -encoding UTF-8 -d out src/M4/*.java
+```
 
-**Speicherung:** `DateiRepository<T>` speichert die Objekte mit Java-Serialisierung in Dateien. Die gespeicherten Klassen müssen deshalb `Serializable` implementieren.
+```bash
+java -cp out M4.ConsoleUI
+```
 
-## Starten
+In IntelliJ: `src/M4/ConsoleUI.java` öffnen und ▶ klicken (dieser Weg wurde nicht getestet). Beim ersten Start werden Beispielzimmer und Beispielpersonal angelegt. Für eine saubere Demo vorher den Ordner `daten` löschen.
 
-In IntelliJ `src/M4/ConsoleUI.java` öffnen und auf ▶ klicken. Beim ersten Start werden Beispielzimmer und Beispielpersonal angelegt. Die Daten liegen im Ordner `daten`.
+### Umgesetzte Use Cases und Testergebnis
 
-## Umgesetzte Use Cases
+Alle Use Cases wurden am 02.11.2026 mit vorbereiteten Eingaben über die Konsole getestet, inklusive Neustart.
 
-Alle Use Cases wurden über die Konsole getestet. Der Start in IntelliJ wurde dabei nicht geprüft.
+| Nr. | Menü | Methode in `SpitalService` | Ergebnis im Test |
+|---|---|---|---|
+| UC1 | 1 | `aufnehmen()` | Patient wird aufgenommen, Betten und Auslastung ändern sich |
+| UC2 | 2 | `verlegen()` | Altes Bett wird frei, neues Bett wird belegt |
+| UC3 | 3 | `entlassen()` | 5 Tage, Mehrbettzimmer, Privat: CHF 2400. Zweite Entlassung ergibt eine Fehlermeldung |
+| UC4 | 4 | `erfasseZimmer()` | Zimmer 103 wird angelegt, doppelte Nummer ergibt eine Fehlermeldung |
+| UC5 | 5 | `getZimmer()` | Freie Betten stimmen, auch nach dem Neustart |
+| UC6 | 6 | `getPersonal()` | Auslastung stimmt, auch nach dem Neustart |
+| UC7 | 7 | `getRechnungen()` | Rechnung ist nach dem Neustart noch vorhanden |
+| UC8 | 8 | `erfasseArzt()`, `erfassePflegekraft()` | Beide Rollen werden angelegt, falsche Rolle ergibt eine Fehlermeldung |
+| UC9 | 9 | `getAktivePatienten()` | Entlassene Patienten erscheinen nicht mehr |
 
-| Nr. | Use Case | Menüpunkt | Methode in `SpitalService` | Getestetes Ergebnis |
-|---|---|---|---|---|
-| UC1 | Patient aufnehmen | 1 | `aufnehmen()` | Aufnahme klappt, volles Zimmer und überlastete Pflegekraft ergeben eine Fehlermeldung |
-| UC2 | Patient verlegen | 2 | `verlegen()` | Altes Bett wird frei, neues Bett wird belegt |
-| UC3 | Patient entlassen | 3 | `entlassen()` | 5 Tage, Mehrbettzimmer, Privat: CHF 2400. Zweite Entlassung ergibt eine Fehlermeldung |
-| UC4 | Zimmer erfassen | 4 | `erfasseZimmer()` | Neues Zimmer wird angelegt, doppelte Nummer ergibt eine Fehlermeldung |
-| UC5 | Zimmer anzeigen | 5 | `getZimmer()` | Freie Betten werden angezeigt und stimmen nach einem Neustart |
-| UC6 | Personal anzeigen | 6 | `getPersonal()` | Auslastung wird angezeigt und stimmt nach einem Neustart |
-| UC7 | Rechnungen anzeigen | 7 | `getRechnungen()` | Rechnung bleibt nach einem Neustart erhalten |
-| UC8 | Personal erfassen | 8 | `erfasseArzt()`, `erfassePflegekraft()` | Beide Rollen werden angelegt, falsche Rolle ergibt eine Fehlermeldung |
-| UC9 | Patienten anzeigen | 9 | `getAktivePatienten()` | Entlassene Patienten werden nicht mehr angezeigt |
+### Vorschlag für den Ablauf der Demo
 
-## Fazit über den Lernprozess
+1. Zimmer (5) und Personal (6) anzeigen.
+2. Patient mit Versicherung Privat und einem Eintritt vor 5 Tagen in Zimmer 101 aufnehmen (1).
+3. Patient ins Zimmer 201 und wieder zurück verlegen (2), danach die freien Betten zeigen (5).
+4. Patient entlassen (3): Die Rechnung zeigt CHF 2400.
+5. Fehler zeigen: Text statt ID, zweiter Patient im Einzelzimmer.
+6. Applikation beenden, neu starten und die Rechnung anzeigen (7).
 
-*Entwurf der KI aus dem tatsächlichen Projektverlauf. Vor der Abgabe prüfen und in eigenen Worten ergänzen.*
+## 10. Stand der Vorgaben
 
-Am Anfang war mir nicht klar, was eine Exception-Klasse genau macht. Durch Nachfragen habe ich gelernt, dass nicht die Klasse, sondern ein Objekt geworfen wird und dass `super(message)` die Meldung an die Elternklasse weitergibt. Bei der Delegation habe ich gelernt, dass ein Objekt eine Aufgabe an ein anderes Objekt weitergibt, das es als Attribut hat.
+| Vorgabe | Stand | Nachweis |
+|---|---|---|
+| OO-basiert, JVM | erfüllt | Java, `src/M4` |
+| Mindestens 8 Klassen, 800 Zeilen | erfüllt | 10 Klassen, rund 960 Zeilen |
+| KI-Hilfe im Code deklariert | erfüllt | Kommentar `// KI-Hilfe` in allen 14 Dateien |
+| Nicht komplett mit KI generiert | **nicht erfüllt** | Die gesamte Applikation ist KI-generiert, siehe [KI-Doku](KI-Doku.md). Muss mit der Lehrperson geklärt werden. |
+| Trennung UI, Logik, Daten | erfüllt | Abschnitt 5 |
+| Validierung und Exceptions | erfüllt | Abschnitt 8 |
+| Mindestens 2 Design Patterns | erfüllt | Abschnitt 6 |
+| Interfaces | erfüllt | `VersicherungStrategy`, `Repository<T>` |
+| Vererbung | erfüllt | `Personal`, `Arzt`, `Pflegekraft` |
+| Clean Code im Code ausgewiesen | erfüllt | Kommentare `// Clean Code (...)`, siehe [cleancode.md](cleancode.md) |
 
-Bei der Planung habe ich das Klassendiagramm von vielen Klassen auf 10 Klassen reduziert. Dadurch ist der Aufbau einfacher, aber `ConsoleUI` und `SpitalService` haben mehr Aufgaben bekommen.
+## 11. Fazit über den Lernprozess
 
-Die Applikation habe ich nicht selbst programmiert, sondern vollständig von der KI generieren lassen, weil ich schnell ein laufendes Projekt brauchte. Das Projekt läuft, aber dadurch habe ich beim Programmieren selbst weniger gelernt. Beim nächsten Projekt würde ich früher anfangen und mehr Code selbst schreiben.
+*Entwurf der KI aus dem tatsächlichen Projektverlauf. Vor der Abgabe prüfen und in eigenen Worten schreiben.*
 
-## Auftrag
+Am Anfang war mir nicht klar, was eine Exception-Klasse genau macht. Durch Nachfragen habe ich gelernt, dass ein Objekt geworfen wird und dass `super(message)` die Meldung an die Elternklasse weitergibt. Bei der Delegation habe ich gelernt, dass ein Objekt eine Aufgabe an ein anderes Objekt weitergibt, das es als Attribut hat.
 
-### Auftrag
+Bei der Planung habe ich die Applikation auf 10 Klassen reduziert. Dadurch ist der Aufbau einfacher, aber `ConsoleUI` und `SpitalService` haben mehr Aufgaben bekommen.
 
-- Sie erstellen eine kurze Beschreibung der Applikation. Was ist das Ziel? (Muss-Kriterien) Was könnte noch umgesetzt werden (nice-to-have)?
-- Sie erstellen eine Skizze der geplanten Architektur (UML Klassendiagramm).
-- Falls Sie das Klassendiagramm von der KI generieren lassen, dokumentieren Sie die Schritte (d.h. die Prompts) und listen Sie auch diese in einem Markdown.
-- Sie beschreiben die Anforderungen an das Projekt und listen die Use Cases auf (d.h. was kann der Benutzer mit der Applikation machen).
-- Erstellen Sie für einen typischen Use Case ein ungefähres Sequenzdiagramm. Die KI generiert Ihnen dieses auch.
-- Alles dokumentieren: Diese Diagramme und die Anforderungen werden in einem Markdown Dokument in ihr Repository abgelegt.
-
-### Vorgaben an das Projekt
-
-- Die Applikation ist oo-basiert (von Vorteil basierend auf JVM). UI ist nicht zwingend.
-- Richtwert: Sie verwenden mind. 8 selbstgeschriebene Klassen. Code-Umfang ist bei mind. 800 Zeilen.
-- Die Hilfe von KI ist erlaubt, Sie müssen das aber im Code ersichtlich deklarieren. Wenn die komplette Applikation mit KI generiert wird, wird die Arbeit nicht akzeptiert.
-- Die Applikation ist sauber getrennt mit User-Interface, Logik, persistente Daten (Daten werden in einer Form gespeichert, z.Bsp. in einer DB).
-- Validierung von User-Input ist vorhanden (Exception Handling bei Fehler).
-- Design Patterns (mind. zwei) sind im Code ersichtlich und von Ihnen beschrieben. (mit Begründung, wieso dieses Pattern hier Sinn macht).
-- Interfaces werden verwendet.
-- Eine Vererbungshierarchie wird implementiert wenn es Sinn macht. Sie erklären wieso, falls Sie keine Vererbung einsetzen.
-- Sie wenden Clean-Code Regeln an und dokumentieren das im Code (aufzeigen wo).
-- SpringBoot kann verwendet werden (falls Sie dieses Framework schon kennen, dann verwenden Sie dieses).
-
-### Abgabe
-
-- Abgabe erfolgt durch ein Repository. Alle Commits müssen per Timestamp nachvollziehbar sein (nur ein einziger Commit ist nicht erlaubt und führt zu Punktabzug).
-- Abgabe beinhaltet aktuelles Klassendiagramm, sowie ein Sequenzdiagramm von einem typischen Use Case. Sie können diese Diagramme mit der KI generieren - dokumentieren Sie den Prompt.
-- In einem Markdown sammeln Sie die Dokumentation zusammen (UML Diagramme, Beschreibung der Applikation, umgesetzt Use Cases sowie ein Fazit über den gemachten Lernprozess).
-- Sie demonstrieren eine lauffähige Applikation bei der Lehrperson, gem. Ihren aufgelisteten Use Cases (die Use Cases dienen als Basis für eine Demonstration der Applikation).
+Die Applikation habe ich nicht selbst programmiert, sondern von der KI generieren lassen, weil ich schnell ein laufendes Projekt brauchte. Das Projekt läuft, aber ich habe beim Programmieren selbst weniger gelernt. Beim nächsten Projekt würde ich früher anfangen und mehr Code selbst schreiben.

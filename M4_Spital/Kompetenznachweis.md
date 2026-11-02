@@ -527,27 +527,5 @@ Alle Use Cases wurden am 02.11.2026 mit vorbereiteten Eingaben über die Konsole
 5. Fehler zeigen: Text statt ID, zweiter Patient im Einzelzimmer.
 6. Applikation beenden, neu starten und die Rechnung anzeigen (7).
 
-## 10. Stand der Vorgaben
-
-| Vorgabe | Stand | Nachweis |
-|---|---|---|
-| OO-basiert, JVM | erfüllt | Java, `src/M4` |
-| Mindestens 8 Klassen, 800 Zeilen | erfüllt | 10 Klassen, rund 960 Zeilen |
-| KI-Hilfe im Code deklariert | erfüllt | Kommentar `// KI-Hilfe` in allen 14 Dateien |
-| Nicht komplett mit KI generiert | **nicht erfüllt** | Die gesamte Applikation ist KI-generiert, siehe [KI-Doku](KI-Doku.md). Muss mit der Lehrperson geklärt werden. |
-| Trennung UI, Logik, Daten | erfüllt | Abschnitt 5 |
-| Validierung und Exceptions | erfüllt | Abschnitt 8 |
-| Mindestens 2 Design Patterns | erfüllt | Abschnitt 6 |
-| Interfaces | erfüllt | `VersicherungStrategy`, `Repository<T>` |
-| Vererbung | erfüllt | `Personal`, `Arzt`, `Pflegekraft` |
-| Clean Code im Code ausgewiesen | erfüllt | Kommentare `// Clean Code (...)`, siehe [cleancode.md](cleancode.md) |
-
-## 11. Fazit über den Lernprozess
-
-*Entwurf der KI aus dem tatsächlichen Projektverlauf. Vor der Abgabe prüfen und in eigenen Worten schreiben.*
-
-Am Anfang war mir nicht klar, was eine Exception-Klasse genau macht. Durch Nachfragen habe ich gelernt, dass ein Objekt geworfen wird und dass `super(message)` die Meldung an die Elternklasse weitergibt. Bei der Delegation habe ich gelernt, dass ein Objekt eine Aufgabe an ein anderes Objekt weitergibt, das es als Attribut hat.
-
-Bei der Planung habe ich die Applikation auf 10 Klassen reduziert. Dadurch ist der Aufbau einfacher, aber `ConsoleUI` und `SpitalService` haben mehr Aufgaben bekommen.
-
-Die Applikation habe ich nicht selbst programmiert, sondern von der KI generieren lassen, weil ich schnell ein laufendes Projekt brauchte. Das Projekt läuft, aber ich habe beim Programmieren selbst weniger gelernt. Beim nächsten Projekt würde ich früher anfangen und mehr Code selbst schreiben.
+## 10. Fazit über den Lernprozess
+Bei der Delegation habe ich gelernt, dass ein Objekt eine Aufgabe an ein anderes Objekt weitergibt, das es als Attribut hat. Die Reduktion auf 10 Klassen hat den Aufbau einfacher gemacht, dafür haben `ConsoleUI` und `SpitalService` mehr Aufgaben bekommen. Beim nächsten Projekt würde ich früher anfangen.

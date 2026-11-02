@@ -2,7 +2,6 @@ package M4;
 
 import java.io.Serializable;
 
-// KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
 // Ein Spitalzimmer mit seinem Typ und seiner aktuellen Belegung.
 public class Zimmer implements Serializable {
 

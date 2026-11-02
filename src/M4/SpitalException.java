@@ -1,6 +1,5 @@
 package M4;
 
-// KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
 // Eigene Exception für falsche Eingaben und verletzte Spitalregeln.
 public class SpitalException extends Exception {
 

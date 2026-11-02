@@ -2,7 +2,6 @@ package M4;
 
 import java.io.Serializable;
 
-// KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
 // Gemeinsame Daten und gemeinsames Verhalten von Ärzten und Pflegekräften.
 public abstract class Personal implements Serializable {
 

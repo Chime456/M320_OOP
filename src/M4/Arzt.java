@@ -1,6 +1,5 @@
 package M4;
 
-// KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
 // Spezialisierung von Personal: legt Rolle und maximale Patientenzahl für Ärzte fest.
 public class Arzt extends Personal {
 

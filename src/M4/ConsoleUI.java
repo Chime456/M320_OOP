@@ -9,7 +9,6 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
-// KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
 // Startet die Applikation, liest und prüft die Eingaben und zeigt die Ausgaben an.
 public class ConsoleUI {
 

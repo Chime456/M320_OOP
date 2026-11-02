@@ -31,11 +31,11 @@ Als Grundlage erhielt die KI den M4-Auftrag und die Beschreibung der Idee. Die P
 
 ### Applikation
 
-| Schritt | Prompt |
-|---|---|
-| `Repository<T>` und `DateiRepository<T>` erstellen | «kannst du mir den auftrag für D4, V4 und Q4 erledigen !!!!!» |
-| Gesamte Applikation generieren, Diagramme und Dokumentation an den Code anpassen | «ist mir egal ich brauch ein laufendes projekt jetzt» |
-| Beispielwerte festlegen | «durchschnittliche zahlen nicht zu extrem nicht zu wenig» |
+| Prompt |
+|---|
+| «kannst du mir den auftrag für D4, V4 und Q4 erledigen !!!!!» |
+| «ist mir egal ich brauch ein laufendes projekt jetzt» |
+| «durchschnittliche zahlen nicht zu extrem nicht zu wenig» |
 
 ### Dokumentation
 

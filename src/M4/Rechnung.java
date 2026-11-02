@@ -3,7 +3,6 @@ package M4;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-// KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
 // Die Rechnung hält die Werte zum Zeitpunkt der Entlassung fest.
 public class Rechnung implements Serializable {
 

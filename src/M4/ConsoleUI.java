@@ -9,6 +9,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
+//Teilweise mit KI
 // Startet die Applikation, liest und prüft die Eingaben und zeigt die Ausgaben an.
 public class ConsoleUI {
 
@@ -118,7 +119,7 @@ public class ConsoleUI {
         zeigePatienten();
         long patientId = leseId("Patienten-ID: ");
 
-        Rechnung rechnung = service.entlassen(patientId);
+        Rechnung rechnung = service.entlassen(patientId); //delegation
         System.out.println("Der Patient wurde entlassen.");
         zeigeRechnung(rechnung);
     }

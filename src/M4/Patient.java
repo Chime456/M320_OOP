@@ -5,7 +5,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 // Ein Patient mit seinem Aufenthalt.
-// Clean Code (Kommentar erklärt das Warum): Zimmer und Personal werden über ihre ID referenziert,
+
+// Clean Code: Zimmer und Personal werden über ihre ID referenziert,
 // damit beim Speichern in getrennten Dateien keine doppelten Objekte entstehen.
 public class Patient implements Serializable {
 

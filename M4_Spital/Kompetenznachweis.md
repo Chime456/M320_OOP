@@ -129,15 +129,15 @@ package "Model" {
   class Patient
   class Zimmer
   class Rechnung
-  abstract class Personal
+  class Personal
   class Arzt
   class Pflegekraft
-  interface VersicherungStrategy <<Strategy>>
+  interface VersicherungStrategy
 }
 
 package "Persistenz" {
-  interface "Repository<T>" as Repository <<Repository>>
-  class "DateiRepository<T>" as DateiRepository
+  interface "Repository"
+  class "DateiRepository"
 }
 
 Personal <|-- Arzt

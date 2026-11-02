@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.ToLongFunction;
 
 // KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
+// Logik
 // Enthält die Abläufe und Regeln des Spitals. Das Speichern wird an die Repositories delegiert.
 // Clean Code (eine Aufgabe pro Klasse): Hier gibt es keine Ein- oder Ausgaben und keinen Dateizugriff.
 public class SpitalService {
@@ -81,7 +82,7 @@ public class SpitalService {
         LocalDate heute = LocalDate.now();
 
         patient.entlasse(heute);
-        patientenZimmer.gibBettFrei();
+        patientenZimmer.gibBettFrei(); //delegation
         arzt.gibPatientAb();
         pflegekraft.gibPatientAb();
         Rechnung rechnung = new Rechnung(naechsteId(rechnungen, Rechnung::getId), patient, patientenZimmer, heute);
@@ -90,7 +91,7 @@ public class SpitalService {
         personal.speichern(arzt);
         personal.speichern(pflegekraft);
         patienten.speichern(patient);
-        rechnungen.speichern(rechnung);
+        rechnungen.speichern(rechnung); //delegation
         return rechnung;
     }
 

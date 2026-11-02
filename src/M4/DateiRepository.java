@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.function.ToLongFunction;
 
 // KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
+// Speicherungen in Dateien
 // Eigene generische Klasse: Speichert Objekte eines beliebigen Typs T dauerhaft in einer Datei.
 public class DateiRepository<T extends Serializable> implements Repository<T> {
 

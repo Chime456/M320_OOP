@@ -21,6 +21,7 @@ public abstract class Personal implements Serializable {
 
     public abstract String getRolle();
 
+    // Clean Code (aussagekräftiger Name): Der Aufrufer liest die Regel, ohne den Vergleich zu kennen.
     public boolean istUeberlastet() {
         return anzahlPatienten >= getMaxPatienten();
     }

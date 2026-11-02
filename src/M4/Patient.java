@@ -5,7 +5,8 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 // KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
-// Ein Patient mit seinem Aufenthalt. Zimmer und Personal werden über ihre ID referenziert,
+// Ein Patient mit seinem Aufenthalt.
+// Clean Code (Kommentar erklärt das Warum): Zimmer und Personal werden über ihre ID referenziert,
 // damit beim Speichern in getrennten Dateien keine doppelten Objekte entstehen.
 public class Patient implements Serializable {
 

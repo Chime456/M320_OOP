@@ -27,6 +27,7 @@ public class Rechnung implements Serializable {
         this.versicherung = patient.getVersicherung();
         this.anzahlTage = patient.getAnzahlTage();
         this.zimmerKosten = anzahlTage * zimmerTyp.getTagespauschale();
+        // Delegation und Polymorphie: Die Versicherungsklasse entscheidet zur Laufzeit über den Betrag.
         this.totalBetrag = versicherung.berechne(zimmerKosten);
         this.datum = datum;
     }

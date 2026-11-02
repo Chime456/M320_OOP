@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.function.ToLongFunction;
 
 // KI-Hilfe: Mit Claude Code (Claude Opus 5.5) generiert.
-// Enthält die Abläufe und Regeln des Spitals. Speichern und Berechnen werden delegiert.
+// Enthält die Abläufe und Regeln des Spitals. Das Speichern wird an die Repositories delegiert.
+// Clean Code (eine Aufgabe pro Klasse): Hier gibt es keine Ein- oder Ausgaben und keinen Dateizugriff.
 public class SpitalService {
 
     private final Repository<Patient> patienten;
@@ -134,6 +135,7 @@ public class SpitalService {
         return rechnungen.findeAlle();
     }
 
+    // Clean Code (kleine Methoden): Die benannte Methode ersetzt einen Kommentar in aufnehmen().
     private void pruefeAufnahmeMoeglich(Zimmer zielZimmer, Personal arzt, Personal pflegekraft)
             throws SpitalException {
         if (zielZimmer.istVoll()) {

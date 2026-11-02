@@ -1,108 +1,95 @@
-# Cleancode: D4, V4 und Q4
+# Clean Code: D4, V4 und Q4
 
-Dieses Dokument gehört zum Projekt Spitalverwaltung. Die restliche Dokumentation steht im [Kompetenznachweis](Kompetenznachweis.md).
+Zurück zum [Kompetenznachweis](Kompetenznachweis.md)
 
 ## D4
 
-| Anforderung | Status | Stelle im Code |
-|---|---|---|
-| Delegation | umgesetzt | `ConsoleUI.patientEntlassen()` ruft `SpitalService.entlassen()` auf, dieser ruft `Repository.speichern()` auf |
-| Trennung von Benutzerschnittstelle und Logik | umgesetzt | Eingaben und Ausgaben nur in `ConsoleUI`, Regeln in `SpitalService` |
-| Eigene Exception für fehlerhafte Eingaben | umgesetzt | `SpitalException`, geworfen z.B. in `ConsoleUI.leseId()`, abgefangen in `ConsoleUI.start()` |
-| Generics in einer eigenen Klasse | umgesetzt | `DateiRepository<T>` |
+| Anforderung | Stelle im Code |
+|---|---|
+| Delegation | `ConsoleUI.patientEntlassen()` ruft `SpitalService.entlassen()` auf, dieser ruft `Repository.speichern()` auf |
+| Trennung von Benutzerschnittstelle und Logik | Eingaben und Ausgaben nur in `ConsoleUI`, Regeln in `SpitalService` |
+| Eigene Exception für fehlerhafte Eingaben | `SpitalException`, geworfen z.B. in `ConsoleUI.leseId()`, abgefangen in `ConsoleUI.start()` |
+| Generics in einer eigenen Klasse | `DateiRepository<T>` |
 
 ## V4
 
-| Anforderung | Status | Stelle im Code |
+| Anforderung | Stelle im Code |
+|---|---|
+| Vererbung | `Arzt` und `Pflegekraft` erben von `Personal` |
+| Interfaces | `VersicherungStrategy`, `Repository<T>` |
+| Polymorphie | `Personal.istUeberlastet()` ruft `getMaxPatienten()` auf, `Rechnung` ruft `versicherung.berechne()` auf |
+| Design Pattern Strategy | `VersicherungStrategy`, `VersicherungsKlasse` |
+| Design Pattern Repository | `Repository<T>`, `DateiRepository<T>` |
+
+## Q4: Clean-Code-Regeln
+
+### Im Code markierte Stellen
+
+Diese Stellen sind direkt im Code mit einem Kommentar `// Clean Code (...)` markiert:
+
+| Regel | Datei | Was dort zu sehen ist |
 |---|---|---|
-| Vererbung | umgesetzt | `Arzt` und `Pflegekraft` erben von `Personal` |
-| Interfaces | umgesetzt | `VersicherungStrategy`, `Repository<T>` |
-| Polymorphie | umgesetzt | `Personal.istUeberlastet()` ruft `getMaxPatienten()` auf, `Rechnung` ruft `versicherung.berechne()` auf |
-| Design Pattern Strategy | umgesetzt | `VersicherungStrategy`, `VersicherungsKlasse` |
-| Design Pattern Repository | umgesetzt | `Repository<T>`, `DateiRepository<T>` |
+| Eine Aufgabe pro Klasse | `SpitalService` | Keine Ein- oder Ausgaben und kein Dateizugriff |
+| Kleine Methoden | `SpitalService` | `pruefeAufnahmeMoeglich()` ersetzt einen Kommentar in `aufnehmen()` |
+| Aussagekräftiger Name | `Personal` | `istUeberlastet()` macht die Regel lesbar, ohne dass man den Vergleich kennen muss |
+| Keine magischen Zahlen | `Arzt`, `Pflegekraft` | `MAX_PATIENTEN` hat einen Namen und steht nur an einem Ort |
+| Keine magischen Zahlen | `VersicherungsKlasse` | `FAKTOR_HALBPRIVAT`, `FAKTOR_PRIVAT` |
+| Keine magischen Werte | `ConsoleUI` | `DATEN_ORDNER`, `NAME_MUSTER`, `ZIMMERNUMMER_MUSTER` |
+| Kommentar erklärt das Warum | `Patient` | Warum Zimmer und Personal nur über die ID referenziert werden |
 
-## Q4: Clean Code und Kommentare
+### Vorher und Nachher
 
-| Clean-Code-Regel | Anwendung | Stelle im Code |
-|---|---|---|
-| Aussagekräftige Namen | Klassen und Methoden sagen, was sie tun | `Personal.istUeberlastet()`, `SpitalService.findeAktivenPatienten()` |
-| Eine Aufgabe pro Klasse | UI, Logik und Speicherung sind getrennt | `ConsoleUI`, `SpitalService`, `DateiRepository<T>` |
-| Kleine Methoden | Lange Abläufe sind in benannte Methoden aufgeteilt | `SpitalService.pruefeAufnahmeMoeglich()`, `ConsoleUI.leseId()` |
-| Kommentare durch Struktur vermeiden | Der Code hat kurze Klassenkommentare und Hinweise auf Clean-Code-Regeln, den Rest erklären die Namen | alle Klassen in `src/M4` |
-| Keine magischen Zahlen | Werte stehen als Konstanten oder Enum-Werte an einem Ort | `ZimmerTyp`, `Arzt.MAX_PATIENTEN`, `VersicherungsKlasse.FAKTOR_PRIVAT` |
-
-Im Code sind die angewendeten Regeln mit einem Kommentar `// Clean Code (...)` markiert, zum Beispiel in `SpitalService`, `Personal`, `Patient`, `Arzt` und `Pflegekraft`.
-
-### Verbesserungsvorschläge für den eigenen Code
-
-- Die Meldungen «ist überlastet» und «ist voll» stehen doppelt: in `SpitalService` und in `Personal` bzw. `Zimmer`. Der Text könnte an einem Ort erzeugt werden, zum Beispiel in einer Methode von `Personal` und `Zimmer`.
-- `ConsoleUI` macht viel: Applikation starten, Menü führen, Eingaben prüfen und Ausgaben anzeigen. Die Prüfung der Eingaben könnte in eine eigene Klasse ausgelagert werden.
-- `Patient` und `Rechnung` verwenden direkt das Enum `VersicherungsKlasse`. Mit dem Interface `VersicherungStrategy` als Attributtyp wäre der Code unabhängiger von der konkreten Umsetzung.
-
-### Vorher-Nachher-Beispiele
-
-**Echte Änderung im Projekt: Kommentar, der veralten kann.** Der Kommentar wiederholte den Wert der Konstanten und wäre bei einer Änderung falsch geworden.
-
-Vorher:
+**Echte Änderung im Projekt (Commit `c50600f`):** Der Kommentar wiederholte einen Wert und wäre bei einer Änderung der Konstanten falsch geworden.
 
 ```java
+// Vorher
 // Ein Arzt betreut maximal 10 Patienten.
 public class Arzt extends Personal {
-```
 
-Nachher:
-
-```java
+// Nachher
 // Spezialisierung von Personal: legt Rolle und maximale Patientenzahl für Ärzte fest.
 public class Arzt extends Personal {
 ```
 
-**Beispiel 1: Kommentar, der nur den Code wiederholt.** Der Kommentar in `src/D3/WeatherApp.java` sagt nichts, was der Methodenname nicht schon sagt.
-
-Vorher (D3):
+**Kommentar, der nur den Code wiederholt:** Das «Vorher» steht heute noch in `src/D3/WeatherApp.java`. Der Methodenname sagt bereits dasselbe.
 
 ```java
+// Vorher
 // Delegation: Eingabe lesen
 String input = ui.askCity();
-```
 
-Nachher, im gleichen Stil wie M4:
-
-```java
+// Nachher
 String input = ui.askCity();
 ```
 
-**Beispiel 2: Kommentar durch eine benannte Methode ersetzen.** Das «Vorher» ist eine Vergleichsvariante und stand so nicht im Code. Das «Nachher» steht in `SpitalService.aufnehmen()`.
-
-Vorher:
+**Kommentar durch eine benannte Methode ersetzen:** Das «Vorher» ist eine Vergleichsvariante und stand so nicht im Code. Das «Nachher» steht in `SpitalService.aufnehmen()`.
 
 ```java
+// Vorher
 // prüfen, ob ein Bett frei ist und das Personal Platz hat
 if (zielZimmer.istVoll()) { ... }
 if (arzt.istUeberlastet()) { ... }
 if (pflegekraft.istUeberlastet()) { ... }
-```
 
-Nachher:
-
-```java
+// Nachher
 pruefeAufnahmeMoeglich(zielZimmer, arzt, pflegekraft);
 ```
 
-**Beispiel 3: Kommentar zu einer Zahl durch eine Konstante ersetzen.** Das «Vorher» ist eine Vergleichsvariante und stand so nicht im Code. Das «Nachher» steht in `Arzt`.
-
-Vorher:
+**Kommentar zu einer Zahl durch eine Konstante ersetzen:** Das «Vorher» ist eine Vergleichsvariante und stand so nicht im Code. Das «Nachher» steht in `Arzt`.
 
 ```java
+// Vorher
 return 10; // maximale Anzahl Patienten
-```
 
-Nachher:
-
-```java
+// Nachher
 private static final int MAX_PATIENTEN = 10;
 
 return MAX_PATIENTEN;
 ```
 
-**Sinnvoller Kommentar:** In `Patient` bleibt der Kommentar stehen, warum Zimmer und Personal über ihre ID referenziert werden. Er erklärt das Warum, das der Code allein nicht zeigt.
+### Was noch besser werden könnte
+
+- **Doppelte Meldungen:** «ist überlastet» und «ist voll» stehen in `SpitalService` und zusätzlich in `Personal` und `Zimmer`. Der Text sollte nur an einem Ort erzeugt werden.
+- **Zu viele Aufgaben in `ConsoleUI`:** Die Klasse startet die Applikation, führt das Menü, prüft Eingaben und zeigt Ausgaben an. Die Prüfung könnte in eine eigene Klasse.
+- **Strategy nicht konsequent:** `Patient` und `Rechnung` verwenden direkt das Enum `VersicherungsKlasse`. Mit `VersicherungStrategy` als Attributtyp wäre der Code unabhängiger von der konkreten Umsetzung.
+- **Lange Parameterliste:** `SpitalService.aufnehmen()` hat sechs Parameter. Ein eigenes Objekt für die Aufnahmedaten wäre übersichtlicher.

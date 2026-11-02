@@ -5,6 +5,16 @@ Mit Hilfe von KI und den Unterrichtsinhalten erstellen Sie eine Applikation, wel
 
 ## Status der Kompetenzen
 
+### M4
+
+| Anforderung | Status | Stelle im Dokument |
+|---|---|---|
+| Grobes Klassendiagramm mit Hierarchie und Interfaces | umgesetzt | «Klassendiagramm (Skizze, nur Klassennamen)» |
+| Detailliertes Klassendiagramm nach Abschluss | umgesetzt | «Detailliertes Klassendiagramm» |
+| Sequenzdiagramm für einen Use Case | umgesetzt | «Sequenzdiagramm: UC3 Patient entlassen» |
+| Beschreibung, Anforderungen und Use Cases | umgesetzt | «Beschreibung der Applikation», «Anforderungen», «Use Cases» |
+| Prompts dokumentiert | umgesetzt | «KI-Einsatz» |
+
 ### D4
 
 | Anforderung | Status | Stelle im Code |
@@ -31,10 +41,34 @@ Mit Hilfe von KI und den Unterrichtsinhalten erstellen Sie eine Applikation, wel
 | Aussagekräftige Namen | Klassen und Methoden sagen, was sie tun | `Personal.istUeberlastet()`, `SpitalService.findeAktivenPatienten()` |
 | Eine Aufgabe pro Klasse | UI, Logik und Speicherung sind getrennt | `ConsoleUI`, `SpitalService`, `DateiRepository<T>` |
 | Kleine Methoden | Lange Abläufe sind in benannte Methoden aufgeteilt | `SpitalService.pruefeAufnahmeMoeglich()`, `ConsoleUI.leseId()` |
-| Kommentare durch Struktur vermeiden | Der Code hat nur kurze Klassenkommentare, den Rest erklären die Namen | alle Klassen in `src/M4` |
+| Kommentare durch Struktur vermeiden | Der Code hat kurze Klassenkommentare und Hinweise auf Clean-Code-Regeln, den Rest erklären die Namen | alle Klassen in `src/M4` |
 | Keine magischen Zahlen | Werte stehen als Konstanten oder Enum-Werte an einem Ort | `ZimmerTyp`, `Arzt.MAX_PATIENTEN`, `VersicherungsKlasse.FAKTOR_PRIVAT` |
 
+Im Code sind die angewendeten Regeln mit einem Kommentar `// Clean Code (...)` markiert, zum Beispiel in `SpitalService`, `Personal`, `Patient`, `Arzt` und `Pflegekraft`.
+
+### Verbesserungsvorschläge für den eigenen Code
+
+- Die Meldungen «ist überlastet» und «ist voll» stehen doppelt: in `SpitalService` und in `Personal` bzw. `Zimmer`. Der Text könnte an einem Ort erzeugt werden, zum Beispiel in einer Methode von `Personal` und `Zimmer`.
+- `ConsoleUI` macht viel: Applikation starten, Menü führen, Eingaben prüfen und Ausgaben anzeigen. Die Prüfung der Eingaben könnte in eine eigene Klasse ausgelagert werden.
+- `Patient` und `Rechnung` verwenden direkt das Enum `VersicherungsKlasse`. Mit dem Interface `VersicherungStrategy` als Attributtyp wäre der Code unabhängiger von der konkreten Umsetzung.
+
 ### Vorher-Nachher-Beispiele
+
+**Echte Änderung im Projekt: Kommentar, der veralten kann.** Der Kommentar wiederholte den Wert der Konstanten und wäre bei einer Änderung falsch geworden.
+
+Vorher:
+
+```java
+// Ein Arzt betreut maximal 10 Patienten.
+public class Arzt extends Personal {
+```
+
+Nachher:
+
+```java
+// Spezialisierung von Personal: legt Rolle und maximale Patientenzahl für Ärzte fest.
+public class Arzt extends Personal {
+```
 
 **Beispiel 1: Kommentar, der nur den Code wiederholt.** Der Kommentar in `src/D3/WeatherApp.java` sagt nichts, was der Methodenname nicht schon sagt.
 
@@ -203,7 +237,9 @@ Die Applikation hat **10 Klassen**, dazu 2 Interfaces und 2 Enums.
 
 Die 10 Klassen sind: `ConsoleUI`, `SpitalService`, `DateiRepository<T>`, `Patient`, `Zimmer`, `Personal`, `Arzt`, `Pflegekraft`, `Rechnung`, `SpitalException`.
 
-### Klassendiagramm
+**Umfang:** 958 Zeilen in `src/M4`, davon 798 ohne Leerzeilen.
+
+### Klassendiagramm (Skizze, nur Klassennamen)
 
 ```plantuml
 @startuml
@@ -259,9 +295,179 @@ Rechnung ..> Zimmer : liest Werte
 @enduml
 ```
 
+### Detailliertes Klassendiagramm (Stand nach Abschluss des Projekts)
+
+Das Diagramm oben ist die grobe Skizze der Architektur. Dieses Diagramm zeigt den umgesetzten Code mit den Abstraktionen: `Personal` ist eine abstrakte Klasse, `VersicherungStrategy` und `Repository<T>` sind Interfaces. Einfache Getter sind weggelassen, damit das Diagramm lesbar bleibt.
+
+```plantuml
+@startuml
+title Spitalverwaltung - Detailliertes Klassendiagramm
+skinparam classAttributeIconSize 0
+
+package "UI" {
+  class ConsoleUI {
+    -service: SpitalService
+    -scanner: Scanner
+    +{static} main(args: String[]): void
+    +start(): void
+    -fuehreAus(auswahl: String): boolean
+    -patientAufnehmen(): void
+    -patientVerlegen(): void
+    -patientEntlassen(): void
+    -leseId(text: String): long
+    -leseName(text: String): String
+    -leseEintritt(): LocalDate
+  }
+}
+
+package "Logik" {
+  class SpitalService {
+    -patienten: Repository<Patient>
+    -zimmer: Repository<Zimmer>
+    -personal: Repository<Personal>
+    -rechnungen: Repository<Rechnung>
+    +legeStartdatenAn(): void
+    +aufnehmen(name: String, versicherung: VersicherungsKlasse, zimmerId: long, arztId: long, pflegekraftId: long, eintritt: LocalDate): Patient
+    +verlegen(patientId: long, neueZimmerId: long): void
+    +entlassen(patientId: long): Rechnung
+    +erfasseZimmer(nummer: String, typ: ZimmerTyp): Zimmer
+    +erfasseArzt(name: String): Arzt
+    +erfassePflegekraft(name: String): Pflegekraft
+    +getAktivePatienten(): List<Patient>
+    -pruefeAufnahmeMoeglich(zielZimmer: Zimmer, arzt: Personal, pflegekraft: Personal): void
+    -findeAktivenPatienten(id: long): Patient
+  }
+}
+
+package "Model" {
+  class Patient {
+    -id: long
+    -name: String
+    -arztId: long
+    -pflegekraftId: long
+    -eintritt: LocalDate
+    -zimmerId: long
+    -austritt: LocalDate
+    +verlegeNach(neueZimmerId: long): void
+    +entlasse(datum: LocalDate): void
+    +istEntlassen(): boolean
+    +getAnzahlTage(): long
+  }
+
+  class Zimmer {
+    -id: long
+    -nummer: String
+    -belegteBetten: int
+    +istVoll(): boolean
+    +belegeBett(): void
+    +gibBettFrei(): void
+    +getFreieBetten(): int
+  }
+
+  abstract class Personal {
+    -id: long
+    -name: String
+    -anzahlPatienten: int
+    +{abstract} getMaxPatienten(): int
+    +{abstract} getRolle(): String
+    +istUeberlastet(): boolean
+    +nimmPatient(): void
+    +gibPatientAb(): void
+  }
+
+  class Arzt {
+    -{static} MAX_PATIENTEN: int = 10
+    +getMaxPatienten(): int
+    +getRolle(): String
+  }
+
+  class Pflegekraft {
+    -{static} MAX_PATIENTEN: int = 6
+    +getMaxPatienten(): int
+    +getRolle(): String
+  }
+
+  class Rechnung {
+    -id: long
+    -patientName: String
+    -zimmerNummer: String
+    -anzahlTage: long
+    -zimmerKosten: double
+    -totalBetrag: double
+    -datum: LocalDate
+  }
+
+  enum ZimmerTyp {
+    MEHRBETT
+    EINZEL
+    INTENSIV
+    -bezeichnung: String
+    -bettenzahl: int
+    -tagespauschale: double
+  }
+
+  interface VersicherungStrategy <<Strategy>> {
+    +berechne(zimmerKosten: double): double
+  }
+
+  enum VersicherungsKlasse {
+    ALLGEMEIN
+    HALBPRIVAT
+    PRIVAT
+    -bezeichnung: String
+    +berechne(zimmerKosten: double): double
+  }
+
+  class SpitalException {
+    +SpitalException(meldung: String)
+  }
+}
+
+package "Persistenz" {
+  interface "Repository<T>" as Repository <<Repository>> {
+    +speichern(objekt: T): void
+    +findeNachId(id: long): Optional<T>
+    +findeAlle(): List<T>
+  }
+
+  class "DateiRepository<T extends Serializable>" as DateiRepository {
+    -datei: Path
+    -idLeser: ToLongFunction<T>
+    -objekte: List<T>
+    +speichern(objekt: T): void
+    +findeNachId(id: long): Optional<T>
+    +findeAlle(): List<T>
+    -ladeAusDatei(): List<T>
+    -schreibeInDatei(): void
+  }
+}
+
+Personal <|-- Arzt
+Personal <|-- Pflegekraft
+Exception <|-- SpitalException
+
+VersicherungStrategy <|.. VersicherungsKlasse
+Repository <|.. DateiRepository
+
+ConsoleUI --> "1" SpitalService : service
+SpitalService --> "4" Repository : Patient, Zimmer, Personal, Rechnung
+SpitalService ..> Rechnung : erstellt
+SpitalService ..> SpitalException : wirft
+ConsoleUI ..> SpitalException : wirft und faengt
+ConsoleUI ..> DateiRepository : erstellt
+
+Patient --> "1" VersicherungsKlasse : versicherung
+Zimmer --> "1" ZimmerTyp : typ
+Rechnung --> "1" ZimmerTyp : zimmerTyp
+Rechnung --> "1" VersicherungsKlasse : versicherung
+Rechnung ..> Patient : liest Werte
+Rechnung ..> Zimmer : liest Werte
+@enduml
+```
+
 ### Details der Klassen
 
-Das Klassendiagramm zeigt nur die Namen und Beziehungen. Die Details stehen in dieser Tabelle.
+Die wichtigsten Attribute und Methoden noch einmal als Übersicht:
 
 | Typ | Wichtige Attribute | Wichtige Methoden |
 |---|---|---|
@@ -289,6 +495,7 @@ actor Benutzer
 participant ConsoleUI
 participant SpitalService
 participant "patienten: Repository<Patient>" as Patienten
+participant "zimmer, personal: Repository" as Stammdaten
 participant "patient: Patient" as Patient
 participant "zimmer: Zimmer" as Zimmer
 participant "arzt, pflegekraft: Personal" as Personal
@@ -311,6 +518,8 @@ else gueltige Eingabe
     ConsoleUI --> Benutzer : Fehlermeldung
   else aktiver Patient
     Patienten --> SpitalService : patient
+    SpitalService -> Stammdaten : findeNachId(zimmerId, arztId, pflegekraftId)
+    Stammdaten --> SpitalService : zimmer, arzt, pflegekraft
     SpitalService -> Patient : entlasse(heute)
     SpitalService -> Zimmer : gibBettFrei()
     SpitalService -> Personal : gibPatientAb()
@@ -319,6 +528,7 @@ else gueltige Eingabe
     Patient --> Rechnung : anzahlTage
     Rechnung -> Versicherung : berechne(zimmerKosten)
     Versicherung --> Rechnung : totalBetrag
+    SpitalService -> Stammdaten : speichern(zimmer, arzt, pflegekraft)
     SpitalService -> Patienten : speichern(patient)
     SpitalService -> Rechnungen : speichern(rechnung)
     SpitalService --> ConsoleUI : rechnung
@@ -332,12 +542,12 @@ end
 
 | Pattern | Wo | Warum es hier Sinn macht |
 |---|---|---|
-| **Strategy** | Interface `VersicherungStrategy`, umgesetzt von den Werten des Enums `VersicherungsKlasse` | Jede Versicherungsklasse rechnet anders. `SpitalService` ruft nur `berechne()` auf und braucht keine langen `if`-Abfragen. Das Enum spart drei eigene Klassen. |
+| **Strategy** | Interface `VersicherungStrategy`, umgesetzt von den Werten des Enums `VersicherungsKlasse` | Jede Versicherungsklasse rechnet anders. `Rechnung` ruft nur `berechne()` auf und braucht keine langen `if`-Abfragen. Das Enum spart drei eigene Klassen. |
 | **Repository** | Interface `Repository<T>`, umgesetzt von `DateiRepository<T>` | Die Logik kennt nur das Interface und nicht die Art der Speicherung. So bleibt die Trennung von Logik und persistenten Daten sauber. |
 
 ## Umsetzung der Objektorientierung
 
-- **Delegation:** `ConsoleUI` gibt die Abläufe an `SpitalService` weiter. `SpitalService` delegiert das Speichern an `Repository<T>` und die Berechnung an `VersicherungStrategy`. Das sind HAT-Beziehungen: `SpitalService` hat die Repositories als Attribute und erhält sie als Parameter im Konstruktor (Aggregation).
+- **Delegation:** `ConsoleUI` gibt die Abläufe an `SpitalService` weiter. `SpitalService` delegiert das Speichern an `Repository<T>`, `Rechnung` delegiert die Berechnung an die Versicherungsklasse. Das sind HAT-Beziehungen: `SpitalService` hat die Repositories als Attribute und erhält sie als Parameter im Konstruktor (Aggregation).
 - **Generics:** Die eigene Klasse `DateiRepository<T>` funktioniert für `Patient`, `Zimmer`, `Personal` und `Rechnung`, ohne den Code mehrfach zu schreiben.
 - **Vererbung:** `Personal` ist eine abstrakte Klasse, weil `Arzt` und `Pflegekraft` gemeinsame Daten und gemeinsames Verhalten haben. Die Zimmertypen unterscheiden sich nur in Bettenzahl und Tagespauschale, darum genügt dort das Enum `ZimmerTyp` ohne Vererbung.
 - **Polymorphismus:** `getMaxPatienten()` und `berechne()` werden je nach Objekt unterschiedlich ausgeführt.
@@ -373,6 +583,8 @@ Die Werte sind frei gewählte Beispielwerte für dieses Projekt und keine echten
 | Privat | 1.6 | CHF 2400 |
 
 Berechnung: `Tage × Tagespauschale × Faktor`
+
+**Bekannte Einschränkung:** Nach einer Verlegung wird der ganze Aufenthalt zur Tagespauschale des letzten Zimmers verrechnet, weil der Patient nur sein aktuelles Zimmer speichert.
 
 | Personal | Maximale Anzahl Patienten |
 |---|---|
@@ -439,6 +651,7 @@ Als Grundlage erhielt die KI den M4-Auftrag und die Beschreibung der Idee (siehe
 | `Repository<T>` und `DateiRepository<T>` erstellen | «kannst du mir den auftrag für D4, V4 und Q4 erledigen !!!!!» |
 | Gesamte Applikation generieren, Diagramme und Dokumentation an den Code anpassen | «ist mir egal ich brauch ein laufendes projekt jetzt» |
 | Klassendiagramm nur mit Namen, restliche Dokumentation ergänzen | «bitte korrigiere uml -> nur klassenname keine inhalte, danach diese sachen noch dokumentieren» |
+| Stand gegen die Level-4-Vorgaben prüfen, detailliertes Klassendiagramm, Sequenzdiagramm nachführen, Clean-Code-Hinweise im Code | «ich muss nur noch diese aufgaben machen level 4» (mit dem M4-Auftrag und den Unterlagen zu Delegation und Polymorphismus) |
 
 ## Auftrag
 

@@ -13,112 +13,9 @@ Mit Hilfe von KI und den Unterrichtsinhalten erstellen Sie eine Applikation, wel
 | Detailliertes Klassendiagramm nach Abschluss | umgesetzt | «Detailliertes Klassendiagramm» |
 | Sequenzdiagramm für einen Use Case | umgesetzt | «Sequenzdiagramm: UC3 Patient entlassen» |
 | Beschreibung, Anforderungen und Use Cases | umgesetzt | «Beschreibung der Applikation», «Anforderungen», «Use Cases» |
-| Prompts dokumentiert | umgesetzt | «KI-Einsatz» |
+| Prompts dokumentiert | umgesetzt | [KI-Doku.md](KI-Doku.md) |
 
-### D4
-
-| Anforderung | Status | Stelle im Code |
-|---|---|---|
-| Delegation | umgesetzt | `ConsoleUI.patientEntlassen()` ruft `SpitalService.entlassen()` auf, dieser ruft `Repository.speichern()` auf |
-| Trennung von Benutzerschnittstelle und Logik | umgesetzt | Eingaben und Ausgaben nur in `ConsoleUI`, Regeln in `SpitalService` |
-| Eigene Exception für fehlerhafte Eingaben | umgesetzt | `SpitalException`, geworfen z.B. in `ConsoleUI.leseId()`, abgefangen in `ConsoleUI.start()` |
-| Generics in einer eigenen Klasse | umgesetzt | `DateiRepository<T>` |
-
-### V4
-
-| Anforderung | Status | Stelle im Code |
-|---|---|---|
-| Vererbung | umgesetzt | `Arzt` und `Pflegekraft` erben von `Personal` |
-| Interfaces | umgesetzt | `VersicherungStrategy`, `Repository<T>` |
-| Polymorphie | umgesetzt | `Personal.istUeberlastet()` ruft `getMaxPatienten()` auf, `Rechnung` ruft `versicherung.berechne()` auf |
-| Design Pattern Strategy | umgesetzt | `VersicherungStrategy`, `VersicherungsKlasse` |
-| Design Pattern Repository | umgesetzt | `Repository<T>`, `DateiRepository<T>` |
-
-## Q4: Clean Code und Kommentare
-
-| Clean-Code-Regel | Anwendung | Stelle im Code |
-|---|---|---|
-| Aussagekräftige Namen | Klassen und Methoden sagen, was sie tun | `Personal.istUeberlastet()`, `SpitalService.findeAktivenPatienten()` |
-| Eine Aufgabe pro Klasse | UI, Logik und Speicherung sind getrennt | `ConsoleUI`, `SpitalService`, `DateiRepository<T>` |
-| Kleine Methoden | Lange Abläufe sind in benannte Methoden aufgeteilt | `SpitalService.pruefeAufnahmeMoeglich()`, `ConsoleUI.leseId()` |
-| Kommentare durch Struktur vermeiden | Der Code hat kurze Klassenkommentare und Hinweise auf Clean-Code-Regeln, den Rest erklären die Namen | alle Klassen in `src/M4` |
-| Keine magischen Zahlen | Werte stehen als Konstanten oder Enum-Werte an einem Ort | `ZimmerTyp`, `Arzt.MAX_PATIENTEN`, `VersicherungsKlasse.FAKTOR_PRIVAT` |
-
-Im Code sind die angewendeten Regeln mit einem Kommentar `// Clean Code (...)` markiert, zum Beispiel in `SpitalService`, `Personal`, `Patient`, `Arzt` und `Pflegekraft`.
-
-### Verbesserungsvorschläge für den eigenen Code
-
-- Die Meldungen «ist überlastet» und «ist voll» stehen doppelt: in `SpitalService` und in `Personal` bzw. `Zimmer`. Der Text könnte an einem Ort erzeugt werden, zum Beispiel in einer Methode von `Personal` und `Zimmer`.
-- `ConsoleUI` macht viel: Applikation starten, Menü führen, Eingaben prüfen und Ausgaben anzeigen. Die Prüfung der Eingaben könnte in eine eigene Klasse ausgelagert werden.
-- `Patient` und `Rechnung` verwenden direkt das Enum `VersicherungsKlasse`. Mit dem Interface `VersicherungStrategy` als Attributtyp wäre der Code unabhängiger von der konkreten Umsetzung.
-
-### Vorher-Nachher-Beispiele
-
-**Echte Änderung im Projekt: Kommentar, der veralten kann.** Der Kommentar wiederholte den Wert der Konstanten und wäre bei einer Änderung falsch geworden.
-
-Vorher:
-
-```java
-// Ein Arzt betreut maximal 10 Patienten.
-public class Arzt extends Personal {
-```
-
-Nachher:
-
-```java
-// Spezialisierung von Personal: legt Rolle und maximale Patientenzahl für Ärzte fest.
-public class Arzt extends Personal {
-```
-
-**Beispiel 1: Kommentar, der nur den Code wiederholt.** Der Kommentar in `src/D3/WeatherApp.java` sagt nichts, was der Methodenname nicht schon sagt.
-
-Vorher (D3):
-
-```java
-// Delegation: Eingabe lesen
-String input = ui.askCity();
-```
-
-Nachher, im gleichen Stil wie M4:
-
-```java
-String input = ui.askCity();
-```
-
-**Beispiel 2: Kommentar durch eine benannte Methode ersetzen.** Das «Vorher» ist eine Vergleichsvariante und stand so nicht im Code. Das «Nachher» steht in `SpitalService.aufnehmen()`.
-
-Vorher:
-
-```java
-// prüfen, ob ein Bett frei ist und das Personal Platz hat
-if (zielZimmer.istVoll()) { ... }
-if (arzt.istUeberlastet()) { ... }
-if (pflegekraft.istUeberlastet()) { ... }
-```
-
-Nachher:
-
-```java
-pruefeAufnahmeMoeglich(zielZimmer, arzt, pflegekraft);
-```
-
-**Beispiel 3: Kommentar zu einer Zahl durch eine Konstante ersetzen.** Das «Vorher» ist eine Vergleichsvariante und stand so nicht im Code. Das «Nachher» steht in `Arzt`.
-
-Vorher:
-
-```java
-return 10; // maximale Anzahl Patienten
-```
-
-Nachher:
-
-```java
-private static final int MAX_PATIENTEN = 10;
-
-return MAX_PATIENTEN;
-```
-
-**Sinnvoller Kommentar:** In `Patient` bleibt der Kommentar stehen, warum Zimmer und Personal über ihre ID referenziert werden. Er erklärt das Warum, das der Code allein nicht zeigt.
+D4, V4 und Q4 stehen in [cleancode.md](cleancode.md), der KI-Einsatz und die Prompts in [KI-Doku.md](KI-Doku.md).
 
 ## Beschreibung der Applikation
 
@@ -622,36 +519,6 @@ Am Anfang war mir nicht klar, was eine Exception-Klasse genau macht. Durch Nachf
 Bei der Planung habe ich das Klassendiagramm von vielen Klassen auf 10 Klassen reduziert. Dadurch ist der Aufbau einfacher, aber `ConsoleUI` und `SpitalService` haben mehr Aufgaben bekommen.
 
 Die Applikation habe ich nicht selbst programmiert, sondern vollständig von der KI generieren lassen, weil ich schnell ein laufendes Projekt brauchte. Das Projekt läuft, aber dadurch habe ich beim Programmieren selbst weniger gelernt. Beim nächsten Projekt würde ich früher anfangen und mehr Code selbst schreiben.
-
-## KI-Einsatz
-
-**Die gesamte Applikation in `src/M4`, die Diagramme, diese Dokumentation und die Beispielwerte wurden mit Claude Code (Claude Opus 5.5) generiert.**
-
-| Teil | Entstanden durch | Deklaration |
-|---|---|---|
-| Alle 14 Java-Dateien in `src/M4` | vollständig mit KI generiert | Kommentar `// KI-Hilfe` oben in jeder Datei |
-| UML-Diagramme | mit KI generiert | Prompts in diesem Dokument |
-| Dokumentation und Beispielwerte | mit KI generiert | Prompts in diesem Dokument |
-| Idee der Applikation | selbst | – |
-| Auswahl: maximal 10 Klassen, nur eine Exception-Klasse, PlantUML, Klassendiagramm nur mit Namen | selbst entschieden | – |
-
-### Prompts
-
-Als Grundlage erhielt die KI den M4-Auftrag und die Beschreibung der Idee (siehe «Beschreibung der Applikation»).
-
-| Schritt | Prompt |
-|---|---|
-| Klassen- und Sequenzdiagramm erstellen | «bei m4 brauche ich ein klassen und sequenzdiagramm also zwei!» |
-| Nur Klassen anzeigen | «klassendiagramm nur klassen anzeigen?» |
-| Dokumentation im README zusammenführen | «kannst du mir der ganze auftrag in einem Readme erstellen» und «nein auch die umls in den readme, also usecases design pattern, aufgbau etc» |
-| PlantUML statt Mermaid verwenden | «aber ich will nicht mermaid sondern plant uml» |
-| Use-Case-Diagramm, Tabelle und Kompetenzen ergänzen (mit den Kompetenzen D4, V4 und Q4 und den Unterlagen zur Delegation) | «und ein usecase uml erstellen wäre gut und eine tabelle erstellen zu patienten aufnehmen für M4 Readme doku» |
-| Beispielwerte festlegen | «durchschnittliche zahlen nicht zu extrem nicht zu wenig» |
-| README als Kompetenznachweis anpassen | «REadme ist der Kompetenznachweis und dort bitte alles anppassen» |
-| `Repository<T>` und `DateiRepository<T>` erstellen | «kannst du mir den auftrag für D4, V4 und Q4 erledigen !!!!!» |
-| Gesamte Applikation generieren, Diagramme und Dokumentation an den Code anpassen | «ist mir egal ich brauch ein laufendes projekt jetzt» |
-| Klassendiagramm nur mit Namen, restliche Dokumentation ergänzen | «bitte korrigiere uml -> nur klassenname keine inhalte, danach diese sachen noch dokumentieren» |
-| Stand gegen die Level-4-Vorgaben prüfen, detailliertes Klassendiagramm, Sequenzdiagramm nachführen, Clean-Code-Hinweise im Code | «ich muss nur noch diese aufgaben machen level 4» (mit dem M4-Auftrag und den Unterlagen zu Delegation und Polymorphismus) |
 
 ## Auftrag
 

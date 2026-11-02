@@ -23,6 +23,7 @@ public enum VersicherungsKlasse implements VersicherungStrategy {
         }
     };
 
+    // Clean Code (keine magischen Zahlen): Die Faktoren haben einen Namen und stehen nur hier.
     private static final double FAKTOR_HALBPRIVAT = 1.3;
     private static final double FAKTOR_PRIVAT = 1.6;
 

@@ -13,6 +13,7 @@ import java.util.Scanner;
 // Startet die Applikation, liest und prüft die Eingaben und zeigt die Ausgaben an.
 public class ConsoleUI {
 
+    // Clean Code (keine magischen Werte): Pfad und Eingabemuster haben einen Namen und stehen nur hier.
     private static final Path DATEN_ORDNER = Path.of("daten");
     private static final String NAME_MUSTER = "[\\p{L} .'-]{2,50}";
     private static final String ZIMMERNUMMER_MUSTER = "[A-Za-z0-9-]{1,10}";
